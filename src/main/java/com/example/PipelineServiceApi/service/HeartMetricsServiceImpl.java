@@ -1,10 +1,13 @@
 package com.example.PipelineServiceApi.service;
 
 import com.example.PipelineServiceApi.model.BloodOxygenData;
+import com.example.PipelineServiceApi.model.BloodPressure;
 import com.example.PipelineServiceApi.model.HeartData;
 import com.example.PipelineServiceApi.repository.BloodOxygenRepository;
+import com.example.PipelineServiceApi.repository.BloodPressureDataRepository;
 import com.example.PipelineServiceApi.repository.HeartMonitorRepository;
 import com.example.PipelineServiceApi.utils.dto.InputDto;
+import com.example.PipelineServiceApi.utils.dto.Pair;
 import com.example.PipelineServiceApi.utils.dto.ReturnDataDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +20,23 @@ public class HeartMetricsServiceImpl {
     HeartMonitorRepository heartMonitorRepository;
     @Autowired
     BloodOxygenRepository bloodOxygenRepository;
+    @Autowired
+    BloodPressureDataRepository bloodPressureDataRepository;
 
+    /**
+     * method to get all heart data values by patient id
+     * @param patientId is the patient id
+     * @return list of heartData objects
+     */
     public List<HeartData> getAllHeartDataById(int patientId) {
         return heartMonitorRepository.findByPatientId(patientId);
     }
 
+    /**
+     * method to get all blood oxygen data by patient id
+     * @param patientId is the patient id
+     * @return list of BloodOxygenData objects
+     */
     public List<BloodOxygenData> getAllBloodOxygenById(int patientId){
         return bloodOxygenRepository.findByPatientId(patientId);
     }
@@ -86,4 +101,24 @@ public class HeartMetricsServiceImpl {
         }
         return returnDataDtoList;
     }
+
+    public List<BloodPressure> getAllBloodPressureById(int patientId){
+        return bloodPressureDataRepository.findByPatientId(patientId);
+    }
+
+    public List<Pair> getBloodPressureByTime(InputDto inputDto){
+        int patientId = inputDto.getPatientId();
+        Date startTime = inputDto.getStartTime();
+        Date endTime = inputDto.getEndTime();
+        List<BloodPressure> bloodPressureList =bloodPressureDataRepository.findByPatientId(patientId);
+        List<Pair> lists = new ArrayList<>();
+        for(BloodPressure b: bloodPressureList){
+            if(b.getTimestamp().after(startTime)==true && b.getTimestamp().before(endTime)==true) {
+                System.out.println(b.getId());
+                lists.add(new Pair(b.getDiastolicValue(),b.getSystolicValue()));
+            }
+        }
+        return lists;
+    }
+
 }
