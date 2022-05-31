@@ -39,4 +39,13 @@ public class HealthMetricsController {
     public ResponseEntity<Object> getBloodOxygenDataTime(@RequestBody InputDto inputDto){
         return new ResponseEntity<>(heartMetricsService.getBloodOxygenByTime(inputDto),HttpStatus.OK);
     }
+    @GetMapping("/getAllBloodPressureData/{patientId}")
+    public ResponseEntity<Object> getAllBloodPressureData(@PathVariable int patientId){
+        return new ResponseEntity<>(heartMetricsService.getAllBloodPressureById(patientId), HttpStatus.OK);
+    }
+    @GetMapping("/getBloodPressureInTime")
+    public ResponseEntity<Object> getBloodPressureDataTime(@RequestBody InputDto inputDto){
+        return new ResponseEntity<>(heartMetricsService.getBloodPressureByTime(inputDto),HttpStatus.OK);
+    }
+
 }
